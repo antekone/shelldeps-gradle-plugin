@@ -53,12 +53,34 @@ class ShelldepsTest {
 
     @Test
     fun applyPlugin() {
-        buildFile.writeText("""
+        buildFile.appendText("""
             plugins {
                 id("org.antoniak.shelldeps")
             }
         """.trimIndent())
         val result = gradle().withArguments("-q", "sanity").build()
+        assertEquals("yup works", result.output.trim())
+    }
+
+    @Test
+    fun checkIfInternalTaskWorks() {
+        buildFile.writeText("""
+            plugins {
+                id("org.antoniak.shelldeps")
+            }
+        """.trimIndent())
+        val result = gradle().withArguments("-q", "shelldeps-unit-test-internal-task").build()
+        assertEquals("works", result.output.trim())
+    }
+
+    @Test
+    fun checkIfGenerateShelldepsWorks() {
+        buildFile.writeText("""
+            plugins {
+                id("org.antoniak.shelldeps")
+            }
+        """.trimIndent())
+        val result = gradle().withArguments("-q", "generate-shelldeps").build()
         println(result.output)
     }
 }
