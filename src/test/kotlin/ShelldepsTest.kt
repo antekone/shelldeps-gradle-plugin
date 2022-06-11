@@ -6,9 +6,16 @@ import org.junit.jupiter.api.io.TempDir
 import java.io.File
 
 class ShelldepsTest {
-    @TempDir lateinit var testProjectDir: File
-    lateinit var settingsFile: File
-    lateinit var buildFile: File
+    @TempDir private lateinit var testProjectDir: File
+    private lateinit var settingsFile: File
+    private lateinit var buildFile: File
+
+    private fun gradle(): GradleRunner {
+        return GradleRunner
+            .create()
+            .withProjectDir(testProjectDir)
+            .withPluginClasspath()
+    }
 
     private fun defaultSettings() {
         settingsFile.writeText("""
@@ -40,7 +47,7 @@ class ShelldepsTest {
 
     @Test
     fun sanity2() {
-        val result = GradleRunner.create().withProjectDir(testProjectDir).withArguments("-q", "sanity").build()
+        val result = gradle().withArguments("-q", "sanity").build()
         assertEquals("yup works", result.output.trim())
     }
 
@@ -51,7 +58,7 @@ class ShelldepsTest {
                 id("org.antoniak.shelldeps")
             }
         """.trimIndent())
-        val result = GradleRunner.create().withProjectDir(testProjectDir).withArguments("-q", "sanity").build()
+        val result = gradle().withArguments("-q", "sanity").build()
         println(result.output)
     }
 }
