@@ -79,8 +79,15 @@ class ShelldepsTest {
             plugins {
                 id("org.antoniak.shelldeps")
             }
+            repositories {
+                mavenCentral()
+            }
+            dependencies {
+                implementation("commons-logging:commons-logging:1.2")
+                implementation("commons-io:commons-io:2.11.0")
+            }
         """.trimIndent())
-        val result = gradle().withArguments("-q", "generate-shelldeps").build()
+        val result = gradle().withArguments("generate-shelldeps", "--console", "plain").build()
         println(result.output)
     }
 }

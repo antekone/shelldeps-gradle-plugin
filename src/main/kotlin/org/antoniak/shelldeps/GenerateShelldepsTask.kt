@@ -5,15 +5,16 @@ import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 import java.io.File
 
-open class GenerateShelldepsTask : DefaultTask() {
+abstract class GenerateShelldepsTaskKt : DefaultTask() {
     @Input
-    var classpath: Property<String>? = null
+    abstract fun getClasspath(): Property<String>
 
     @OutputFile
-    var shellScriptPath: Property<File>? = null
+    abstract fun getShellScriptPath(): Property<File>
 
     @TaskAction
     fun apply() {
-        println("runtime: ${project.configurations.named("runtime")}")
+        val cp = getClasspath().get()
+        println("Applying: cp=${getClasspath().get()}, ssp=${getShellScriptPath().get().absolutePath}")
     }
 }
