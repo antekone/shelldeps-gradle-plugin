@@ -10,12 +10,10 @@ class ShelldepsTest {
     private lateinit var settingsFile: File
     private lateinit var buildFile: File
 
-    private fun gradle(): GradleRunner {
-        return GradleRunner
-            .create()
-            .withProjectDir(testProjectDir)
-            .withPluginClasspath()
-    }
+    private fun gradle() = GradleRunner
+        .create()
+        .withProjectDir(testProjectDir)
+        .withPluginClasspath()
 
     private fun defaultSettings() {
         settingsFile.writeText("""
@@ -87,7 +85,26 @@ class ShelldepsTest {
                 implementation("commons-io:commons-io:2.11.0")
             }
         """.trimIndent())
-        val result = gradle().withArguments("generate-shelldeps", "--console", "plain").build()
+        gradle().withArguments("generate-shelldeps", "--console", "plain").build()
+    }
+
+    @Test
+    fun checkIfGenerateShelldepsIsExecutedAfterClasses() {
+        buildFile.writeText("""
+            plugins {
+                id("org.antoniak.shelldeps")
+            }
+            repositories {
+                mavenCentral()
+            }
+            dependencies {
+                implementation("commons-logging:commons-logging:1.2")
+                implementation("commons-io:commons-io:2.11.0")
+            }
+        """.trimIndent())
+        val result = gradle().withArguments("classes", "--console", "plain").build()
+        val result2 = gradle().withArguments("classes", "--console", "plain").build()
         println(result.output)
+        println(result2.output)
     }
 }

@@ -1,6 +1,5 @@
 package org.antoniak.shelldeps
 
-import GenerateShelldepsTaskKt
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
@@ -16,10 +15,11 @@ class PluginMain : Plugin<Project> {
             }
 
             register("generate-shelldeps", GenerateShelldepsTaskKt::class.java) { it ->
-                it.dependsOn += "classes"
-                it.getClasspath().set(target.configurations.named("runtimeClasspath").map { it.asPath })
-                it.getShellScriptPath().set(target.file("${target.projectDir}/shelldeps.sh"))
+                it.classpath = target.configurations.named("runtimeClasspath").map { it.asPath }.get()
+                it.outputFile = target.file("${target.projectDir}/shelldeps.sh")
             }
+
+            target.tasks.findByName("classes")!!.dependsOn += "generate-shelldeps"
         }
     }
 }
